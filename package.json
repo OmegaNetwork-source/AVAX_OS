@@ -1,0 +1,7 @@
+{
+  "name": "avax-os",
+  "private": true,
+  "scripts": {
+    "build": "node scripts/build-vercel.js"
+  }
+}

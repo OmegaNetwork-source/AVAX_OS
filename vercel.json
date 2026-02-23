@@ -1,5 +1,7 @@
 {
   "version": 2,
+  "buildCommand": "npm run build",
+  "outputDirectory": "public",
   "rewrites": [
     { "source": "/", "destination": "/OmegaOS_Website/index.html" },
     { "source": "/((?!dapp\\.fun|AVAX%20Arcade).*)", "destination": "/OmegaOS_Website/$1" }
