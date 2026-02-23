@@ -1,0 +1,7 @@
+{
+  "version": 2,
+  "rewrites": [
+    { "source": "/", "destination": "/OmegaOS_Website/index.html" },
+    { "source": "/(.*)", "destination": "/OmegaOS_Website/$1" }
+  ]
+}
