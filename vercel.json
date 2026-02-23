@@ -2,6 +2,6 @@
   "version": 2,
   "rewrites": [
     { "source": "/", "destination": "/OmegaOS_Website/index.html" },
-    { "source": "/(.*)", "destination": "/OmegaOS_Website/$1" }
+    { "source": "/((?!dapp\\.fun|AVAX%20Arcade).*)", "destination": "/OmegaOS_Website/$1" }
   ]
 }

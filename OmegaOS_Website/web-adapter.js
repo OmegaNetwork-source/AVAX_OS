@@ -232,8 +232,14 @@
                 'integrations-manager': 'integrations-manager.html',
                 'pgt': 'https://www.pgtools.tech/',
                 'strix': 'strix.html',
-                'dappfun': 'http://localhost:5173/',
-                'avax-arcade': 'http://localhost:62678/AVAX%20Arcade/avax-arcade.html',
+                'dappfun': (function() {
+                    if (typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')) return 'http://localhost:5173/';
+                    return (window.location.origin || '') + '/dapp.fun/';
+                })(),
+                'avax-arcade': (function() {
+                    if (typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')) return 'http://localhost:62678/AVAX%20Arcade/avax-arcade.html';
+                    return (window.location.origin || '') + '/AVAX%20Arcade/avax-arcade.html';
+                })(),
                 'heatmap': 'https://networkmap.omeganetwork.co/',
                 'quake': 'https://quake.omeganetwork.co/',
                 'omegamusic': 'https://omegamusic.omeganetwork.co/'
