@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AVAX Arcade</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800;900&family=Orbitron:wght@400;700;900&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-content">
+            <a href="/" class="logo" aria-label="AVAX Arcade home">
+                <svg class="logo-mark" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                    <rect width="40" height="40" rx="8" stroke="currentColor" stroke-width="2" fill="none"/>
+                    <path d="M8 14h24M8 20h24M8 26h16" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                    <circle cx="28" cy="26" r="3" fill="currentColor"/>
+                </svg>
+                <span class="logo-text">AVAX Arcade</span>
+            </a>
+            <div class="nav-links">
+                <a href="#games">Games</a>
+                <a href="#collection">Collection</a>
+                <a href="#about">About</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section - Arcade Screen -->
+    <section class="hero">
+        <div class="hero-screen">
+            <canvas id="hero-game-bg" class="hero-game-bg" aria-hidden="true"></canvas>
+            <div class="hero-screen-overlay"></div>
+            <div class="hero-scanlines" aria-hidden="true"></div>
+            <div class="hero-content">
+                <div class="hero-badge">Built on Avalanche</div>
+                <h1 class="hero-title">
+                    Welcome to the
+                    <span class="gradient-text">Future of Gaming</span>
+                </h1>
+                <p class="hero-powered">Powered by AVAX</p>
+                <p class="hero-subtitle">
+                    Play games, compete with friends, and win prizes. High-performance gaming on Avalanche.
+                </p>
+                <div class="hero-buttons">
+                    <a href="#games" class="btn-primary">Explore Games</a>
+                    <a href="#collection" class="btn-secondary">Explore Collection</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Featured Games Section -->
+    <section id="games" class="games-section">
+        <div class="section-header">
+            <h2>Featured Games</h2>
+            <p>Immersive experiences powered by Avalanche and blockchain technology</p>
+        </div>
+
+        <div class="wave-wrapper">
+            <span class="wave-tab top">Wave 1</span>
+            <div class="games-grid">
+                <!-- Quake – Highlight Game (full width, top) -->
+                <div class="game-card quake-card quake-highlight">
+                    <div class="game-image quake-bg">
+                        <video class="quake-trailer" src="quake-trailer.mp4" autoplay loop muted playsinline
+                            preload="auto" aria-label="Quake trailer"></video>
+                    </div>
+                    <div class="game-info">
+                        <h3>Quake</h3>
+                        <p>Experience the classic arena shooter that defined a generation. Fast-paced combat, dark
+                            fantasy atmosphere, and multiplayer mayhem from id Software.</p>
+                        <a href="games/Omega_Quake/index.html" class="btn-play">Play Now</a>
+                    </div>
+                </div>
+
+                <!-- Space Pilot Game Card -->
+                <div class="game-card">
+                    <div class="game-image spacepilot-bg">
+                        <div class="game-badge">Now Live</div>
+                        <div class="spacepilot-ship" aria-hidden="true">
+                            <svg viewBox="0 0 128 160" role="img" focusable="false">
+                                <path d="M64 4L82 44V74L102 96V142L82 120V156H46V120L26 142V96L46 74V44L64 4Z"
+                                    fill="#6CFF72" />
+                                <path d="M64 18L74 46V96L88 110V128L74 116V142H54V116L40 128V110L54 96V46L64 18Z"
+                                    fill="#0F1F33" />
+                                <path d="M64 36L68 52V94L76 102V108L68 100V132H60V100L52 108V102L60 94V52L64 36Z"
+                                    fill="#6CFF72" opacity="0.55" />
+                                <circle cx="64" cy="86" r="8" fill="#4CFFCC" />
+                                <path d="M48 120L56 132V150H48V120Z" fill="#6CFF72" opacity="0.75" />
+                                <path d="M80 120L72 132V150H80V120Z" fill="#6CFF72" opacity="0.75" />
+                                <path d="M26 96L10 116V132L26 120V96Z" fill="#53FF8D" opacity="0.6" />
+                                <path d="M102 96L118 116V132L102 120V96Z" fill="#53FF8D" opacity="0.6" />
+                            </svg>
+                        </div>
+                        <div class="spacepilot-hud">
+                            <span class="hud-title">Space Pilot</span>
+                            <span class="hud-subtitle">Dodge. Survive. Escape.</span>
+                        </div>
+                    </div>
+                    <div class="game-info">
+                        <h3>Space Pilot</h3>
+                        <p>Outmaneuver incoming asteroids, collect power cores, and climb the leaderboard in this
+                            on-chain arcade shooter.</p>
+
+                        <a href="games/spacegame/index.html" class="btn-play">Play Now</a>
+                    </div>
+                </div>
+
+                <!-- Snake Game Card -->
+                <div class="game-card">
+                    <div class="game-image snake-bg">
+                        <div class="game-badge">Now Live</div>
+                        <div class="snake-grid" aria-hidden="true">
+                            <div class="snake-node snake-node-1"></div>
+                            <div class="snake-node snake-node-2"></div>
+                            <div class="snake-node snake-node-3"></div>
+                            <div class="snake-node snake-node-4"></div>
+                            <div class="snake-node snake-node-5"></div>
+                        </div>
+                        <div class="snake-avatar">
+                            <span class="snake-segment"></span>
+                            <span class="snake-segment"></span>
+                            <span class="snake-segment glow"></span>
+                        </div>
+                    </div>
+                    <div class="game-info">
+                        <h3>Snake Arena</h3>
+                        <p>Glide through the neon arena, absorb energy orbs, and outmaneuver rival serpents in this
+                            multiplayer snake royale.</p>
+
+                        <a href="games/somniasnake/index.html" class="btn-play">Play Now</a>
+                    </div>
+                </div>
+
+                <!-- Arcade Bot Game Card -->
+                <div class="game-card">
+                    <div class="game-image arcade-bot-bg">
+                        <div class="game-badge">New Release</div>
+
+                        <!-- Retro Robot Avatar -->
+                        <svg viewBox="0 0 100 100" width="120" height="120"
+                            style="filter: drop-shadow(0 5px 15px rgba(0,0,0,0.3)); transform: translateY(10px);">
+                            <!-- Antenna -->
+                            <line x1="50" y1="10" x2="50" y2="30" stroke="#a0a0a0" stroke-width="3" />
+                            <circle cx="50" cy="10" r="4" fill="#ff4444"
+                                style="animation: pulse 1s infinite alternate;" />
+                            <!-- Head -->
+                            <rect x="25" y="30" width="50" height="40" rx="8" fill="#e0e0e0" />
+                            <rect x="25" y="30" width="50" height="40" rx="8" fill="url(#metal-gradient-bot)"
+                                stroke="#a0a0a0" stroke-width="2" />
+                            <!-- Face Screen -->
+                            <rect x="32" y="38" width="36" height="20" rx="4" fill="#111" />
+                            <!-- Eyes -->
+                            <rect x="36" y="42" width="8" height="8" rx="1" fill="#00ffff"
+                                style="animation: blink-bot 3s infinite;" />
+                            <rect x="56" y="42" width="8" height="8" rx="1" fill="#00ffff"
+                                style="animation: blink-bot 3s infinite;" />
+                            <!-- Body -->
+                            <path d="M 30 75 L 70 75 L 65 95 L 35 95 Z" fill="#c0c0c0" stroke="#999" stroke-width="2" />
+
+                            <defs>
+                                <linearGradient id="metal-gradient-bot" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" style="stop-color:#ffffff;stop-opacity:1" />
+                                    <stop offset="50%" style="stop-color:#d0d0d0;stop-opacity:1" />
+                                    <stop offset="100%" style="stop-color:#a0a0a0;stop-opacity:1" />
+                                </linearGradient>
+                            </defs>
+                            <style>
+                                @keyframes pulse {
+                                    from {
+                                        opacity: 0.6;
+                                    }
+
+                                    to {
+                                        opacity: 1;
+                                        box-shadow: 0 0 10px #ff0000;
+                                    }
+                                }
+
+                                @keyframes blink-bot {
+
+                                    0%,
+                                    96%,
+                                    100% {
+                                        height: 8px;
+                                        transform: scaleY(1);
+                                    }
+
+                                    98% {
+                                        height: 1px;
+                                        transform: scaleY(0.1);
+                                    }
+                                }
+                            </style>
+                        </svg>
+
+                        <div class="arcade-bot-label">ARCADE BOT</div>
+                    </div>
+                    <div class="game-info">
+                        <h3>Arcade Bot</h3>
+                        <p>Battle through waves of enemies, collect power-ups, and defeat the boss in this retro action
+                            platformer.</p>
+
+                        <a href="games/arcadebots/dist/index.html" class="btn-play">Play Now</a>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="wave-wrapper wave-2">
+            <span class="wave-tab top">Wave 2</span>
+            <div class="games-grid coming">
+                <div class="game-card hall-of-fame">
+                    <div class="game-image halloffame-bg">
+                        <img src="https://i.postimg.cc/3WjkPF5F/hall-of-fame.jpg" alt="Hall of Fame"
+                            class="game-cover-image" />
+                        <div class="game-badge">Hall of Fame</div>
+                    </div>
+                    <div class="game-info">
+                        <h3>Hall of Fame</h3>
+                        <p>Race and wager with your friends to see who the GOAT is.</p>
+                        <div class="game-stats">
+                            <div class="stat">
+                                <span class="stat-value">Soon</span>
+                                <span class="stat-label">Access</span>
+                            </div>
+                            <div class="stat">
+                                <span class="stat-value">TBD</span>
+                                <span class="stat-label">Reward Pool</span>
+                            </div>
+                        </div>
+                        <a href="#" class="btn-play disabled" aria-disabled="true">Await Launch</a>
+                    </div>
+                </div>
+                <div class="game-card coming-soon">
+                    <div class="game-image placeholder-bg-2">
+                        <div class="game-badge coming-soon-badge">Coming Soon</div>
+                    </div>
+                    <div class="game-info">
+                        <h3>Coming Soon</h3>
+                        <p>Reinforcements inbound...</p>
+                    </div>
+                </div>
+                <div class="game-card coming-soon">
+                    <div class="game-image placeholder-bg-1">
+                        <div class="game-badge coming-soon-badge">Coming Soon</div>
+                    </div>
+                    <div class="game-info">
+                        <h3>Coming Soon</h3>
+                        <p>Encrypted mission dossier.</p>
+                    </div>
+                </div>
+                <div class="game-card coming-soon">
+                    <div class="game-image placeholder-bg-2">
+                        <div class="game-badge coming-soon-badge">Coming Soon</div>
+                    </div>
+                    <div class="game-info">
+                        <h3>Coming Soon</h3>
+                        <p>Awaiting signal...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features-section">
+        <div class="section-header">
+            <h2>Why AVAX Arcade?</h2>
+            <p>Built for the next generation of gamers on Avalanche</p>
+        </div>
+
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon icon-speed"></div>
+                <h3>Lightning Fast</h3>
+                <p>Experience instant transactions and zero lag with Avalanche's fast, low-cost L1</p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon icon-secure"></div>
+                <h3>Secure & Decentralized</h3>
+                <p>Your assets are protected by blockchain security and true ownership</p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon icon-rewards"></div>
+                <h3>Play & Earn</h3>
+                <p>Earn rewards while playing your favorite games on the blockchain</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Collection Gallery Section -->
+    <section id="collection" class="collection-section">
+        <div class="section-header">
+            <h2>Arcade Bots</h2>
+            <p>3100 Arcade Gaming Icons on Avalanche. Coming soon.</p>
+        </div>
+
+        <div class="collection-gallery">
+            <div class="gallery-item" data-page-url="https://postimg.cc/0MQBn2ZX" data-image-code="0MQBn2ZX">
+                <img src="" alt="Collection Item 1" loading="lazy">
+                <div class="gallery-overlay">
+                    <button class="gallery-view-btn">View</button>
+                </div>
+            </div>
+            <div class="gallery-item" data-page-url="https://postimg.cc/yWTDc12c" data-image-code="yWTDc12c">
+                <img src="" alt="Collection Item 3" loading="lazy">
+                <div class="gallery-overlay">
+                    <button class="gallery-view-btn">View</button>
+                </div>
+            </div>
+            <div class="gallery-item" data-page-url="https://postimg.cc/Fd5YV9Lr" data-image-code="Fd5YV9Lr">
+                <img src="" alt="Collection Item 4" loading="lazy">
+                <div class="gallery-overlay">
+                    <button class="gallery-view-btn">View</button>
+                </div>
+            </div>
+            <div class="gallery-item" data-page-url="https://postimg.cc/SnrxwD72" data-image-code="SnrxwD72">
+                <img src="" alt="Collection Item 5" loading="lazy">
+                <div class="gallery-overlay">
+                    <button class="gallery-view-btn">View</button>
+                </div>
+            </div>
+            <div class="gallery-item" data-page-url="https://postimg.cc/mP8TdhBC" data-image-code="mP8TdhBC">
+                <img src="" alt="Collection Item 6" loading="lazy">
+                <div class="gallery-overlay">
+                    <button class="gallery-view-btn">View</button>
+                </div>
+            </div>
+            <div class="gallery-item" data-page-url="https://postimg.cc/PLJT0hqp" data-image-code="PLJT0hqp">
+                <img src="" alt="Collection Item 7" loading="lazy">
+                <div class="gallery-overlay">
+                    <button class="gallery-view-btn">View</button>
+                </div>
+            </div>
+            <div class="gallery-item" data-page-url="https://postimg.cc/0KRv6w0b" data-image-code="0KRv6w0b">
+                <img src="" alt="Collection Item 8" loading="lazy">
+                <div class="gallery-overlay">
+                    <button class="gallery-view-btn">View</button>
+                </div>
+            </div>
+            <div class="gallery-item" data-page-url="https://postimg.cc/RNTmFq6x" data-image-code="RNTmFq6x">
+                <img src="" alt="Collection Item 9" loading="lazy">
+                <div class="gallery-overlay">
+                    <button class="gallery-view-btn">View</button>
+                </div>
+            </div>
+            <div class="gallery-item" data-page-url="https://postimg.cc/5YvdMtWb" data-image-code="5YvdMtWb">
+                <img src="" alt="Collection Item 10" loading="lazy">
+                <div class="gallery-overlay">
+                    <button class="gallery-view-btn">View</button>
+                </div>
+            </div>
+            <div class="gallery-item" data-page-url="https://postimg.cc/Y45Z8wGY" data-image-code="Y45Z8wGY">
+                <img src="" alt="Collection Item 12" loading="lazy">
+                <div class="gallery-overlay">
+                    <button class="gallery-view-btn">View</button>
+                </div>
+            </div>
+            <div class="gallery-item" data-page-url="https://postimg.cc/N24ng9Nk" data-image-code="N24ng9Nk">
+                <img src="" alt="Collection Item 13" loading="lazy">
+                <div class="gallery-overlay">
+                    <button class="gallery-view-btn">View</button>
+                </div>
+            </div>
+            <div class="gallery-item" data-page-url="https://postimg.cc/XpNj9w0q" data-image-code="XpNj9w0q">
+                <img src="" alt="Collection Item 14" loading="lazy">
+                <div class="gallery-overlay">
+                    <button class="gallery-view-btn">View</button>
+                </div>
+            </div>
+            <div class="gallery-item" data-page-url="https://postimg.cc/jWjwdGMY" data-image-code="jWjwdGMY">
+                <img src="" alt="Collection Item 15" loading="lazy">
+                <div class="gallery-overlay">
+                    <button class="gallery-view-btn">View</button>
+                </div>
+            </div>
+            <div class="gallery-item" data-page-url="https://postimg.cc/3dCdjKqP" data-image-code="3dCdjKqP">
+                <img src="" alt="Collection Item 16" loading="lazy">
+                <div class="gallery-overlay">
+                    <button class="gallery-view-btn">View</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Image Modal -->
+    <div id="imageModal" class="image-modal" onclick="closeImageModal()">
+        <span class="modal-close" onclick="event.stopPropagation(); closeImageModal();">&times;</span>
+        <img class="modal-content" id="modalImage" onclick="event.stopPropagation();">
+    </div>
+
+    <!-- About Section -->
+    <section id="about" class="about-section">
+        <div class="about-inner">
+            <div class="about-content">
+                <div class="about-text">
+                    <h2>Built on Avalanche</h2>
+                    <p>
+                        AVAX Arcade runs on Avalanche for fast, low-cost, and scalable gaming.
+                        Play on-chain with sub-second finality and minimal fees.
+                    </p>
+                    <div class="about-stats">
+                        <div class="about-stat">
+                            <span class="about-stat-icon" aria-hidden="true">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+                            </span>
+                            <h4>Sub-Second</h4>
+                            <p>Block Times</p>
+                        </div>
+                        <div class="about-stat">
+                            <span class="about-stat-icon" aria-hidden="true">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/><circle cx="12" cy="12" r="3"/></svg>
+                            </span>
+                            <h4>Scalable</h4>
+                            <p>L2 Technology</p>
+                        </div>
+                        <div class="about-stat">
+                            <span class="about-stat-icon" aria-hidden="true">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                            </span>
+                            <h4>Low Cost</h4>
+                            <p>Transaction Fees</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="about-visual">
+                    <div class="network-visualization" aria-hidden="true">
+                        <svg viewBox="0 0 200 200" class="network-svg">
+                            <defs>
+                                <linearGradient id="nodeGlow" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" stop-color="#fff" stop-opacity="0.9"/>
+                                    <stop offset="100%" stop-color="#fff" stop-opacity="0.2"/>
+                                </linearGradient>
+                            </defs>
+                            <line x1="100" y1="30" x2="60" y2="90" stroke="rgba(255,255,255,0.15)" stroke-width="1"/>
+                            <line x1="100" y1="30" x2="140" y2="90" stroke="rgba(255,255,255,0.15)" stroke-width="1"/>
+                            <line x1="100" y1="30" x2="100" y2="170" stroke="rgba(255,255,255,0.15)" stroke-width="1"/>
+                            <line x1="60" y1="90" x2="100" y2="170" stroke="rgba(255,255,255,0.12)" stroke-width="1"/>
+                            <line x1="140" y1="90" x2="100" y2="170" stroke="rgba(255,255,255,0.12)" stroke-width="1"/>
+                            <line x1="60" y1="90" x2="140" y2="90" stroke="rgba(255,255,255,0.1)" stroke-width="1"/>
+                            <circle cx="100" cy="30" r="12" fill="url(#nodeGlow)" class="network-dot network-dot-1"/>
+                            <circle cx="60" cy="90" r="10" fill="url(#nodeGlow)" class="network-dot network-dot-2"/>
+                            <circle cx="140" cy="90" r="10" fill="url(#nodeGlow)" class="network-dot network-dot-3"/>
+                            <circle cx="100" cy="170" r="14" fill="url(#nodeGlow)" class="network-dot network-dot-4"/>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer: single compact bar, no dead space -->
+    <footer class="footer">
+        <div class="footer-bar">
+            <a href="/" class="footer-logo" aria-label="AVAX Arcade home">
+                <svg class="footer-logo-mark" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                    <rect width="40" height="40" rx="8" stroke="currentColor" stroke-width="2" fill="none"/>
+                    <path d="M8 14h24M8 20h24M8 26h16" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                    <circle cx="28" cy="26" r="3" fill="currentColor"/>
+                </svg>
+                <span class="footer-brand">AVAX Arcade</span>
+            </a>
+            <span class="footer-tagline">Next-generation gaming on Avalanche</span>
+            <nav class="footer-games">
+                <a href="games/Omega_Quake/index.html">Quake</a>
+                <a href="games/spacegame/index.html">Space Pilot</a>
+                <a href="games/somniasnake/index.html">Snake Arena</a>
+                <a href="games/arcadebots/dist/index.html">Arcade Bot</a>
+            </nav>
+            <p class="footer-copy">&copy; 2026 AVAX Arcade</p>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+
+</html>

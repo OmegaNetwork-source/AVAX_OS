@@ -1,0 +1,9 @@
+{
+  "version": 2,
+  "buildCommand": "",
+  "outputDirectory": ".",
+  "framework": null,
+  "installCommand": "",
+  "cleanUrls": true
+}
+

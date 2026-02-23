@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Omega Create</title>
+    <link rel="stylesheet" href="ai-cursor.css">
+    <script src="web-adapter.js"></script>
+</head>
+
+<body>
+    <!-- Custom Title Bar -->
+    <div class="title-bar">
+        <div class="title-bar-left">
+            <div class="app-icon">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#00d4ff" stroke-width="2">
+                    <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
+                </svg>
+            </div>
+            <span class="app-title">Omega Create</span>
+        </div>
+        <div class="title-bar-right">
+            <button class="win-btn" id="minimizeBtn" title="Minimize">
+                <svg width="12" height="12" viewBox="0 0 12 12">
+                    <path d="M0 6h12" stroke="currentColor" stroke-width="1"></path>
+                </svg>
+            </button>
+            <button class="win-btn" id="maximizeBtn" title="Maximize">
+                <svg width="12" height="12" viewBox="0 0 12 12">
+                    <rect x="1" y="1" width="10" height="10" stroke="currentColor" stroke-width="1" fill="none"></rect>
+                </svg>
+            </button>
+            <button class="win-btn close-btn" id="closeBtn" title="Close">
+                <svg width="12" height="12" viewBox="0 0 12 12">
+                    <path d="M1 1l10 10M11 1L1 11" stroke="currentColor" stroke-width="1"></path>
+                </svg>
+            </button>
+        </div>
+    </div>
+
+    <!-- Main Layout -->
+    <div class="app-container">
+        <!-- Pane 1: Chat -->
+        <div class="pane-chat">
+            <div class="chat-history" id="chatHistory">
+                <!-- Messages will be added here -->
+                <div class="chat-message ai">
+                    <div class="msg-bubble">
+                        Hello! I'm Omega Create. I can help you build scripts, websites, and Solidity contracts. What
+                        would you like to build today?
+                    </div>
+                </div>
+            </div>
+
+            <div class="chat-input-area">
+                <div class="input-wrapper">
+                    <textarea id="chatInput" placeholder="Describe your app..." rows="1"></textarea>
+                    <div class="input-controls">
+                        <div class="model-badge">
+                            <div class="model-dot"></div>
+                            <span>Developer Mode (DeepSeek)</span>
+                        </div>
+                        <button class="send-btn" id="sendBtn" title="Send (Enter)">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pane 2: Code Editor (Full Width by default) -->
+        <div class="pane-content">
+            <div class="content-tabs">
+                <div class="tab active" id="tabCode">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="16 18 22 12 16 6"></polyline>
+                        <polyline points="8 6 2 12 8 18"></polyline>
+                    </svg>
+                    Code
+                </div>
+                <button class="preview-toggle-btn" id="previewToggleBtn" title="Toggle Preview">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                    Preview
+                </button>
+                <!-- Save button -->
+                <button class="win-btn" id="saveFileBtn" title="Save File" style="margin-left: auto;">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
+                        <polyline points="17 21 17 13 7 13 7 21"></polyline>
+                        <polyline points="7 3 7 8 15 8"></polyline>
+                    </svg>
+                </button>
+            </div>
+
+            <div class="content-main">
+                <!-- Code Editor (Always visible) -->
+                <div id="codePane" class="code-pane-full">
+                    <textarea class="code-editor-shim" id="codeEditor" spellcheck="false"
+                        placeholder="// Code will appear here..."></textarea>
+                </div>
+
+                <!-- Preview (Collapsible overlay) -->
+                <div id="previewPane" class="preview-pane-overlay hidden">
+                    <div class="preview-header">
+                        <span>Preview</span>
+                        <button class="preview-close-btn" id="previewCloseBtn" title="Close Preview">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <path d="M18 6L6 18M6 6l12 12"></path>
+                            </svg>
+                        </button>
+                    </div>
+                    <iframe id="previewFrame" class="preview-frame"
+                        sandbox="allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox"></iframe>
+                    <div class="loading-overlay hidden" id="loadingOverlay">
+                        <div class="spinner"></div>
+                        <div>Generating...</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="ai-dev.js"></script>
+</body>
+
+</html>

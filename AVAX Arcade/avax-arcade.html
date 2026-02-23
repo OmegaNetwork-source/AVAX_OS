@@ -1,0 +1,812 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#111111">
+<title>AVAX ARCADE</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Inter:wght@300;400;500;600;700&display=swap');
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:#111;overflow:hidden;width:100vw;height:100vh;font-family:'Inter',sans-serif;cursor:none;-webkit-tap-highlight-color:transparent;touch-action:pan-x pan-y;}
+body.using-mouse{cursor:none;}
+#cursor{position:fixed;width:10px;height:10px;background:#fff;border-radius:50%;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);mix-blend-mode:difference;transition:transform .15s,width .15s,height .15s;}
+#cursor.big{width:30px;height:30px;}
+@media (hover:none) and (pointer:coarse){#cursor{display:none;} body{cursor:default;}}
+#three-canvas{position:fixed;top:0;left:0;width:100%;height:100%;z-index:1;touch-action:none;}
+#screen-ui{position:fixed;z-index:50;overflow:hidden;pointer-events:none;opacity:0;transition:opacity .25s;}
+#screen-ui.active{pointer-events:all;}
+#screen-iframe{width:100%;height:100%;border:0;display:block;background:#0a0a0a;}
+#screen-ui.active #screen-iframe{opacity:1;pointer-events:auto;}
+#info{position:fixed;top:18px;left:18px;z-index:200;display:flex;flex-direction:column;gap:4px;transition:opacity .5s;}
+.ir{font-size:6px;letter-spacing:.1em;color:rgba(255,255,255,.25);text-transform:uppercase;display:flex;align-items:center;gap:5px;}
+.ik{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);padding:1px 5px;border-radius:3px;font-size:5px;color:rgba(255,255,255,.45);font-weight:600;}
+#nav-bar{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);z-index:200;display:flex;align-items:center;gap:6px;background:rgba(6,6,6,.9);border:1px solid rgba(255,255,255,.09);padding:7px 12px;backdrop-filter:blur(14px);border-radius:40px;padding-bottom:max(12px,env(safe-area-inset-bottom));}
+.nb{width:28px;height:28px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.09);border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:9px;color:rgba(255,255,255,.4);transition:all .14s;user-select:none;}
+.nb:hover{background:rgba(255,255,255,.12);color:#fff;border-color:rgba(255,255,255,.2);}
+.nb:active{transform:scale(.85);}
+#nbplay{width:40px;height:40px;background:#fff;color:#000;font-size:5px;font-weight:700;letter-spacing:.05em;border-radius:50%;border:none;font-family:'Inter',sans-serif;}
+#nbplay:hover{background:#e0e0e0;}
+#nbplay.on{background:#ff2244;color:#fff;}
+.nb-sep{width:1px;height:16px;background:rgba(255,255,255,.07);}
+.nb-tip{font-size:5px;letter-spacing:.08em;color:rgba(255,255,255,.2);white-space:nowrap;padding:0 4px;}
+#nav-bar .interactive-wrap{display:flex;align-items:center;gap:8px;cursor:pointer;user-select:none;padding:2px 0;}
+#nav-bar .interactive-wrap .toggle-pill{width:40px;height:22px;background:rgba(255,255,255,.2);border-radius:22px;position:relative;transition:background .2s;flex-shrink:0;}
+#nav-bar .interactive-wrap .toggle-pill::after{content:'';position:absolute;width:18px;height:18px;background:#fff;border-radius:50%;top:2px;left:2px;transition:transform .2s;box-shadow:0 1px 3px rgba(0,0,0,.3);}
+#nav-bar .interactive-wrap.off .toggle-pill{background:rgba(255,255,255,.08);}
+#nav-bar .interactive-wrap.off .toggle-pill::after{transform:translateX(18px);}
+#nav-bar .interactive-label{font-size:10px;font-weight:600;letter-spacing:.04em;color:rgba(255,255,255,.9);white-space:nowrap;}
+#nav-bar .mode-hint{font-size:9px;letter-spacing:.06em;color:rgba(255,255,255,.4);margin-left:2px;}
+#zbar{position:fixed;right:18px;top:50%;transform:translateY(-50%);z-index:200;display:flex;flex-direction:column;align-items:center;gap:4px;right:max(18px,env(safe-area-inset-right));}
+.zb{width:22px;height:22px;background:rgba(6,6,6,.85);border:1px solid rgba(255,255,255,.09);border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:12px;color:rgba(255,255,255,.35);transition:all .14s;}
+.zb:hover{color:#fff;border-color:rgba(255,255,255,.25);}
+@media (hover:none) and (pointer:coarse){
+  .nb{min-width:44px;min-height:44px;width:44px;height:44px;}
+  #nbplay{min-width:48px;min-height:48px;width:48px;height:48px;}
+  .zb{min-width:44px;min-height:44px;width:44px;height:44px;}
+}
+.zt{width:2px;height:65px;background:rgba(255,255,255,.07);border-radius:2px;position:relative;}
+.zf{position:absolute;bottom:0;left:0;right:0;background:#fff;border-radius:2px;transition:height .2s;}
+.zlbl{font-size:5px;letter-spacing:.12em;color:rgba(255,255,255,.15);}
+</style>
+</head>
+<body>
+<div id="cursor"></div>
+<canvas id="three-canvas"></canvas>
+
+<div id="screen-ui">
+  <iframe id="screen-iframe" title="AVAX Arcade"></iframe>
+</div>
+
+<div id="info">
+  <div class="ir"><span class="ik">DRAG</span>Orbit</div>
+  <div class="ir"><span class="ik">SCROLL</span>Zoom</div>
+  <div class="ir"><span class="ik">TAP</span>Enter</div>
+</div>
+<div id="nav-bar">
+  <div id="interactive-toggle" class="interactive-wrap interactive-on" title="When off, PLAY opens the site in this tab">
+    <div class="toggle-pill"></div>
+    <span id="interactive-label">Interactive</span>
+    <span class="mode-hint" id="mode-hint">play on cabinet</span>
+  </div>
+  <div class="nb-sep"></div>
+  <div class="nb" id="nbl">◀</div>
+  <div class="nb" id="nbu">▲</div>
+  <div class="nb" id="nbplay">PLAY</div>
+  <div class="nb" id="nbd">▼</div>
+  <div class="nb" id="nbr">▶</div>
+  <div class="nb-sep"></div>
+  <div class="nb-tip" id="nbtip">Click cabinet or PLAY to enter</div>
+</div>
+<div id="zbar">
+  <div class="zb" id="zp">+</div>
+  <div class="zt"><div class="zf" id="zfill" style="height:40%"></div></div>
+  <div class="zb" id="zm">−</div>
+  <div class="zlbl">ZOOM</div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+(function(){
+'use strict';
+
+// ── CURSOR (hidden on touch devices) ──
+const cur = document.getElementById('cursor');
+document.addEventListener('mousemove', e => { cur.style.left=e.clientX+'px'; cur.style.top=e.clientY+'px'; });
+document.addEventListener('mousedown', () => cur.style.transform='translate(-50%,-50%) scale(.55)');
+document.addEventListener('mouseup',   () => cur.style.transform='translate(-50%,-50%) scale(1)');
+document.querySelectorAll('button,a,.nb,.zb,#interactive-toggle').forEach(el => {
+  el.addEventListener('mouseenter', () => cur.classList.add('big'));
+  el.addEventListener('mouseleave', () => cur.classList.remove('big'));
+});
+// ─────────────────────────────────────────────────────────
+// THREE.JS
+// ─────────────────────────────────────────────────────────
+const cvs = document.getElementById('three-canvas');
+const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || (navigator.maxTouchPoints && navigator.maxTouchPoints > 2);
+const renderer = new THREE.WebGLRenderer({canvas:cvs,antialias:!isMobile,powerPreference:'high-performance'});
+renderer.setPixelRatio(Math.min(devicePixelRatio, isMobile ? 2 : 2));
+renderer.setSize(innerWidth,innerHeight);
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = isMobile ? THREE.BasicShadowMap : THREE.PCFSoftShadowMap;
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 1.25;
+
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0x111111);
+scene.fog = new THREE.FogExp2(0x111111, 0.016);
+
+const camera = new THREE.PerspectiveCamera(42, innerWidth/innerHeight, 0.1, 200);
+
+// Cabinet group — world Y offset so whole machine is in view
+const cab = new THREE.Group();
+cab.position.set(0,-2.7,0);
+scene.add(cab);
+
+// Helper: create box mesh, add to group, return it
+function bx(w,h,d, mat, x,y,z) {
+  const mesh = new THREE.Mesh(new THREE.BoxGeometry(w,h,d), mat);
+  mesh.position.set(x,y,z);
+  mesh.castShadow = true;
+  mesh.receiveShadow = true;
+  cab.add(mesh);
+  return mesh;
+}
+function bxg(w,h,d, mat, x,y,z, grp) {
+  const mesh = new THREE.Mesh(new THREE.BoxGeometry(w,h,d), mat);
+  mesh.position.set(x,y,z);
+  mesh.castShadow = true;
+  grp.add(mesh);
+  return mesh;
+}
+function cyl(rt,rb,h, mat, x,y,z, grp) {
+  const mesh = new THREE.Mesh(new THREE.CylinderGeometry(rt,rb,h,16), mat);
+  mesh.position.set(x,y,z);
+  mesh.castShadow = true;
+  if(grp) grp.add(mesh); else cab.add(mesh);
+  return mesh;
+}
+function sph3(r, mat, x,y,z, grp) {
+  const mesh = new THREE.Mesh(new THREE.SphereGeometry(r,20,20), mat);
+  mesh.position.set(x,y,z);
+  if(grp) grp.add(mesh); else cab.add(mesh);
+  return mesh;
+}
+
+// ── DIMENSIONS ──
+// Cabinet base is Y=0, grows upward — deeper proportions for physical presence
+const W   = 2.2;   // total width
+// Lower body: deeper base so cabinet has real "body"
+const LH  = 2.8;   const LD  = 1.18;
+// Upper body: stepped back from lower for classic arcade silhouette
+const UH  = 2.2;   const UD  = 0.88;
+const MQH = 0.52;  // marquee height
+// Z coords (depth) centered on Z=0
+const LFZ =  0.59; // lower front
+const LBZ = -0.59; // lower back
+const UFZ =  0.50; // upper front (flush with lower)
+const UBZ = -0.38; // upper back (stepped in)
+const LCZ =  0.00; // lower center Z
+const UCZ = (UFZ+UBZ)/2;    // upper center Z
+// Y centers
+const LCY = LH/2;           // 1.4
+const UCY = LH + UH/2;      // 3.9
+const MQY = LH + UH + MQH/2;// 5.26
+// Monitor center Y
+const MON_Y = LH + UH*0.48; // 4.856
+// Screen world Y (accounting for cab offset)
+const SCR_WORLD_Y = MON_Y - 2.7;
+const BEZEL_DEPTH = 0.14;   // deep bezel so screen sits in a well
+const SCR_FZ = UFZ + BEZEL_DEPTH;  // screen recessed behind bezel
+const SCR_W = 1.62; const SCR_H = 1.34;
+
+// ── MATERIALS ── (slightly more contrast so front/sides read as volume)
+const mBody  = new THREE.MeshStandardMaterial({color:0x1e1e1e,roughness:.5,metalness:.35});
+const mBodyD = new THREE.MeshStandardMaterial({color:0x0d0d0d,roughness:.65,metalness:.28});
+const mMetal = new THREE.MeshStandardMaterial({color:0x303030,roughness:.25,metalness:.92});
+const mChrm  = new THREE.MeshStandardMaterial({color:0x484848,roughness:.08,metalness:1.0});
+const mBlk   = new THREE.MeshStandardMaterial({color:0x060606,roughness:.9});
+const mBezel = new THREE.MeshStandardMaterial({color:0x080808,roughness:.8,metalness:.4});
+const mCtrl  = new THREE.MeshStandardMaterial({color:0x1a1a1a,roughness:.5, metalness:.55});
+const mNeonW = new THREE.MeshStandardMaterial({color:0xffffff,emissive:new THREE.Color(0xffffff),emissiveIntensity:2.8});
+const mNeonR = new THREE.MeshStandardMaterial({color:0xff2244,emissive:new THREE.Color(0xff2244),emissiveIntensity:3.5});
+// Button materials — high emissive so they glow even without direct light
+const BCOLS  = [0xff2244, 0x2266ff, 0xffcc00, 0x00cc44];
+const mBtns  = BCOLS.map(c => new THREE.MeshStandardMaterial({
+  color:c, roughness:.2, metalness:.3,
+  emissive: new THREE.Color(c), emissiveIntensity: 1.0
+}));
+const mJsRed = new THREE.MeshStandardMaterial({
+  color:0xff1133, roughness:.2, metalness:.3,
+  emissive: new THREE.Color(0xff1133), emissiveIntensity: 1.2
+});
+const mGreen = new THREE.MeshStandardMaterial({
+  color:0x00dd44, roughness:.2, metalness:.3,
+  emissive: new THREE.Color(0x00dd44), emissiveIntensity: 1.0
+});
+
+// ── SIDE PANELS (lower + upper, properly positioned) ──
+function makeSideArt(flip) {
+  const cv=document.createElement('canvas'); cv.width=256; cv.height=512;
+  const ctx=cv.getContext('2d');
+  ctx.fillStyle='#141414'; ctx.fillRect(0,0,256,512);
+  const cg=ctx.createLinearGradient(0,0,256,512);
+  cg.addColorStop(0,'rgba(255,255,255,.045)'); cg.addColorStop(.5,'rgba(255,255,255,.01)'); cg.addColorStop(1,'rgba(255,255,255,.035)');
+  ctx.fillStyle=cg; ctx.fillRect(0,0,256,512);
+  ctx.strokeStyle='rgba(255,255,255,.04)'; ctx.lineWidth=.5;
+  for(let x2=0;x2<256;x2+=18){ctx.beginPath();ctx.moveTo(x2,0);ctx.lineTo(x2,512);ctx.stroke();}
+  for(let y2=0;y2<512;y2+=18){ctx.beginPath();ctx.moveTo(0,y2);ctx.lineTo(256,y2);ctx.stroke();}
+  // Vertical "AVAX" in red on both sides (no SA)
+  ctx.save();
+  ctx.translate(128,256);
+  ctx.rotate(flip ? Math.PI/2 : -Math.PI/2);
+  ctx.fillStyle='#e63946';
+  ctx.font='bold 48px Arial';
+  ctx.textAlign='center';
+  ctx.textBaseline='middle';
+  ctx.fillText('AVAX',0,0);
+  ctx.restore();
+  return new THREE.CanvasTexture(cv);
+}
+const mSideL = new THREE.MeshStandardMaterial({map:makeSideArt(false),roughness:.55,metalness:.15});
+const mSideR = new THREE.MeshStandardMaterial({map:makeSideArt(true), roughness:.55,metalness:.15});
+
+// Lower side panels — thicker so sides read as solid
+const SIDE_THICK = 0.09;
+const spLL = new THREE.Mesh(new THREE.BoxGeometry(SIDE_THICK,LH,LD), mSideL);
+spLL.position.set(-W/2-SIDE_THICK/2, LCY, LCZ); spLL.castShadow=true; spLL.receiveShadow=true; cab.add(spLL);
+const spLR = new THREE.Mesh(new THREE.BoxGeometry(SIDE_THICK,LH,LD), mSideR);
+spLR.position.set( W/2+SIDE_THICK/2, LCY, LCZ); spLR.castShadow=true; spLR.receiveShadow=true; cab.add(spLR);
+// Upper side panels
+const spUL = new THREE.Mesh(new THREE.BoxGeometry(SIDE_THICK,UH,UD), mSideL);
+spUL.position.set(-W/2-SIDE_THICK/2, UCY, UCZ); spUL.castShadow=true; spUL.receiveShadow=true; cab.add(spUL);
+const spUR = new THREE.Mesh(new THREE.BoxGeometry(SIDE_THICK,UH,UD), mSideR);
+spUR.position.set( W/2+SIDE_THICK/2, UCY, UCZ); spUR.castShadow=true; spUR.receiveShadow=true; cab.add(spUR);
+
+// Step cap where upper steps in from lower
+bx(W+0.12, 0.045, Math.abs(UBZ-LBZ), mChrm, 0, LH+0.022, (LBZ+UBZ)/2);
+
+// ── BODY FACES ──
+bx(W,LH,0.05, mBody,  0, LCY, LFZ+0.025); // lower front
+bx(W,LH,0.05, mBodyD, 0, LCY, LBZ-0.025); // lower back
+bx(W,0.05,LD, mChrm,  0, 0.025, LCZ);     // bottom
+bx(W,UH,0.05, mBody,  0, UCY, UFZ+0.025); // upper front
+bx(W,UH,0.05, mBodyD, 0, UCY, UBZ-0.025); // upper back
+
+// Feet
+bx(0.22,0.14,0.78, mChrm, -0.78, 0.07, LCZ);
+bx(0.22,0.14,0.78, mChrm,  0.78, 0.07, LCZ);
+
+// ── CONTROL PANEL ── (protrudes from cabinet, tilted toward player)
+const CP_Y = LH * 0.64;  // slightly higher
+const CP_Z = LFZ + 0.26; // stick out in front of cabinet
+const CP_A = 0.28;       // tilt toward player (not into the machine)
+
+const cpGrp = new THREE.Group();
+cpGrp.position.set(0, CP_Y, CP_Z);
+cpGrp.rotation.set(CP_A,0,0);
+bxg(W, 0.10, 0.88, mCtrl,  0, 0,    0, cpGrp); // thicker slab, deeper
+bxg(W, 0.06, 0.82, mMetal, 0, 0.08, 0, cpGrp); // metal top face
+cab.add(cpGrp);
+// Front lip of control panel (front edge of the protruding shelf)
+bx(W, 0.06, 0.10, mCtrl, 0, CP_Y-0.22, CP_Z + 0.38);
+
+// Front panel below the CP (cabinet face under the shelf)
+bx(W, 0.52, 0.05, mBody, 0, CP_Y-0.38, LFZ+0.025);
+
+// ── JOYSTICKS ── (stick tilts when dragged)
+function makeJoystick(jx) {
+  const jGrp = new THREE.Group();
+  jGrp.rotation.set(CP_A,0,0);
+  jGrp.userData.controlType = 'joystick';
+
+  const base = new THREE.Mesh(new THREE.CylinderGeometry(0.14,0.14,0.05,12), mCtrl);
+  base.position.set(0,0.025,0);
+  jGrp.add(base);
+
+  const ring = new THREE.Mesh(new THREE.TorusGeometry(0.11,0.018,8,24), mChrm);
+  ring.position.set(0,0.07,0);
+  jGrp.add(ring);
+
+  const stickGrp = new THREE.Group();
+  const shaft = new THREE.Mesh(new THREE.CylinderGeometry(0.030,0.036,0.30,12), mMetal);
+  shaft.position.set(0,0.20,0);
+  stickGrp.add(shaft);
+  const ball = new THREE.Mesh(new THREE.SphereGeometry(0.098,20,20), mJsRed);
+  ball.position.set(0,0.38,0);
+  stickGrp.add(ball);
+  stickGrp.position.set(0,0.07,0);
+  jGrp.add(stickGrp);
+
+  jGrp.position.set(jx, CP_Y+0.05, CP_Z+0.14);
+  jGrp.userData.stick = stickGrp;
+  cab.add(jGrp);
+  return { group: jGrp, stick: stickGrp };
+}
+const jsL = makeJoystick(-0.50);
+const jsR = makeJoystick( 0.50);
+
+// Joystick glow lights — in world space
+const jsLLt = new THREE.PointLight(0xff2244, 4.0, 1.4);
+jsLLt.position.set(-0.50, CP_Y-2.7+0.50, CP_Z+0.14+0.5);
+scene.add(jsLLt);
+const jsRLt = new THREE.PointLight(0xff2244, 4.0, 1.4);
+jsRLt.position.set( 0.50, CP_Y-2.7+0.50, CP_Z+0.14+0.5);
+scene.add(jsRLt);
+
+// ── BUTTONS — 4 per player, 2 players ──
+const BTN_LAYOUT = [
+  [-0.08, 0.02],  // top-center
+  [-0.17,-0.07],  // mid-left
+  [ 0.01,-0.07],  // mid-right
+  [-0.08,-0.16],  // bottom
+];
+
+const allButtonGroups = [];
+const allStartGroups = [];
+function makeButtons(xOffset) {
+  BTN_LAYOUT.forEach(([bx2,bz2],i) => {
+    const bGrp = new THREE.Group();
+    bGrp.rotation.set(CP_A,0,0);
+    bGrp.userData.controlType = 'button';
+    bGrp.userData.faceIndex = 1;
+    const housing = new THREE.Mesh(new THREE.CylinderGeometry(0.072,0.078,0.042,16), mCtrl);
+    housing.position.set(0,0,0);
+    bGrp.add(housing);
+    const face = new THREE.Mesh(new THREE.CylinderGeometry(0.062,0.062,0.044,16), mBtns[i]);
+    face.position.set(0,0.002,0);
+    bGrp.add(face);
+    bGrp.position.set(xOffset+bx2, CP_Y+0.066, CP_Z+bz2+0.12);
+    cab.add(bGrp);
+    allButtonGroups.push(bGrp);
+    const bLt = new THREE.PointLight(BCOLS[i], 1.5, 0.8);
+    bLt.position.set(xOffset+bx2, CP_Y-2.7+0.31, CP_Z+bz2+0.12+0.5);
+    scene.add(bLt);
+  });
+}
+makeButtons( 0.18);
+makeButtons(-0.18);
+
+// ── START BUTTONS ──
+[[-0.32, 0.24],[0.32, 0.24]].forEach(([sx,sz]) => {
+  const sGrp = new THREE.Group();
+  sGrp.rotation.set(CP_A,0,0);
+  sGrp.userData.controlType = 'start';
+  sGrp.userData.faceIndex = 1;
+  const sh2 = new THREE.Mesh(new THREE.CylinderGeometry(0.052,0.058,0.045,16), mCtrl);
+  sh2.position.set(0,0,0); sGrp.add(sh2);
+  const sf = new THREE.Mesh(new THREE.CylinderGeometry(0.042,0.042,0.046,16), mGreen);
+  sf.position.set(0,0.002,0); sGrp.add(sf);
+  sGrp.position.set(sx, CP_Y+0.068, CP_Z+sz+0.08);
+  cab.add(sGrp);
+  allStartGroups.push(sGrp);
+  const sLt = new THREE.PointLight(0x00dd44, 2.0, 0.9);
+  sLt.position.set(sx, CP_Y-2.7+0.31, CP_Z+sz+0.08+0.5);
+  scene.add(sLt);
+});
+
+// Coin slots
+[[-0.50],[0.50]].forEach(([cx]) => {
+  bx(0.18,0.024,0.04, mChrm, cx, 0.56, LFZ+0.04);
+  bx(0.10,0.008,0.03, mBlk,  cx, 0.56, LFZ+0.055);
+});
+
+// ── MONITOR BEZEL + SCREEN (recessed so screen sits in a real well) ──
+bx(1.80, 1.52, BEZEL_DEPTH, mBezel, 0, MON_Y, UFZ + BEZEL_DEPTH/2);
+bx(SCR_W, SCR_H, 0.024, mBlk, 0, MON_Y, UFZ + 0.045);
+
+const scrMesh = new THREE.Mesh(
+  new THREE.PlaneGeometry(SCR_W, SCR_H),
+  new THREE.MeshBasicMaterial({color:0x070810,transparent:true,opacity:.96})
+);
+scrMesh.position.set(0, MON_Y, SCR_FZ);
+scrMesh.name = 'screen';
+cab.add(scrMesh);
+
+// Glare on glass
+const glM = new THREE.Mesh(new THREE.PlaneGeometry(0.40,0.16), new THREE.MeshBasicMaterial({color:0xffffff,transparent:true,opacity:.02}));
+glM.position.set(-0.18, MON_Y+SCR_H*.36, SCR_FZ+0.002);
+glM.rotation.set(0,0,-0.20);
+cab.add(glM);
+
+// ── SPEAKER GRILLES ──
+for(let r=0;r<3;r++) for(let c=0;c<4;c++) {
+  [-0.68,0.68].forEach(sx => {
+    const d = new THREE.Mesh(new THREE.CylinderGeometry(.013,.013,.03,6), mBlk);
+    d.position.set(sx+(c-1.5)*.062, 0.9+r*.072, LFZ+0.05);
+    cab.add(d);
+  });
+}
+
+// ── MARQUEE ── (dark red bar + white text so "AVAX ARCADE" is always visible)
+const mqC = document.createElement('canvas'); mqC.width=512; mqC.height=110;
+const mqCtx = mqC.getContext('2d');
+mqCtx.fillStyle='#5c1010'; mqCtx.fillRect(0,0,512,110);
+mqCtx.fillStyle='#2a0808'; mqCtx.fillRect(0,0,512,5); mqCtx.fillRect(0,105,512,5);
+mqCtx.font='bold 38px Arial'; mqCtx.textAlign='center'; mqCtx.textBaseline='middle';
+mqCtx.fillStyle='#ffffff'; mqCtx.fillText('AVAX ARCADE',256,50);
+mqCtx.fillStyle='rgba(255,255,255,.75)'; mqCtx.font='500 13px Arial';
+mqCtx.fillText('BUILT ON AVALANCHE  ·  POWERED BY AVAX',256,76);
+const mqTex = new THREE.CanvasTexture(mqC);
+const mqMat = new THREE.MeshStandardMaterial({
+  map:mqTex,
+  color:0xffffff,
+  emissive:0xff2244,
+  emissiveIntensity:0.15,
+  roughness:0.7,
+  metalness:0.05
+});
+const mqMesh = new THREE.Mesh(new THREE.BoxGeometry(W, MQH, 0.065), mqMat);
+mqMesh.position.set(0, MQY, UFZ+0.07);
+mqMesh.castShadow = true;
+cab.add(mqMesh);
+
+bx(W,   MQH, 0.05, mBodyD, 0,  MQY, UFZ-0.005);        // back
+bx(SIDE_THICK, MQH, 0.12, mBodyD, -W/2-SIDE_THICK/2, MQY, UFZ+0.03);  // left
+bx(SIDE_THICK, MQH, 0.12, mBodyD,  W/2+SIDE_THICK/2, MQY, UFZ+0.03);  // right
+bx(W+0.12, 0.055, 0.13, mChrm, 0, MQY+MQH/2+0.028, UFZ+0.03); // top cap
+
+const mqLt = new THREE.PointLight(0xffffff,6,3);
+mqLt.position.set(0, MQY-2.7, UFZ+0.4);
+scene.add(mqLt);
+
+// ── NEON TRIM (on outer edge of side panels) ──
+bx(0.010,(LH+UH+MQH),0.010, mNeonW, -W/2-SIDE_THICK-0.01, (LH+UH+MQH)/2, UFZ);
+bx(0.010,(LH+UH+MQH),0.010, mNeonW,  W/2+SIDE_THICK+0.01, (LH+UH+MQH)/2, UFZ);
+bx(W,0.009,0.009, mNeonR, 0, 0.01, LFZ);
+
+const cnLtL = new THREE.PointLight(0xffffff,1.6,4); cnLtL.position.set(-1.2,(LH+UH)/2-2.7,UFZ+0.4); scene.add(cnLtL);
+const cnLtR = new THREE.PointLight(0xffffff,1.6,4); cnLtR.position.set( 1.2,(LH+UH)/2-2.7,UFZ+0.4); scene.add(cnLtR);
+const botLt = new THREE.PointLight(0xff2244,2.0,2.5); botLt.position.set(0,-2.68,LFZ+0.5); scene.add(botLt);
+
+// Light red glow around the arcade machine (AVAX branding)
+const glowRed = 0xff5566;
+const cabCenterY = (LH+UH)/2 - 2.7;
+const glowL = new THREE.PointLight(glowRed, 2.2, 5); glowL.position.set(-1.6, cabCenterY, 0.2); scene.add(glowL);
+const glowR = new THREE.PointLight(glowRed, 2.2, 5); glowR.position.set( 1.6, cabCenterY, 0.2); scene.add(glowR);
+const glowF = new THREE.PointLight(glowRed, 1.8, 4); glowF.position.set(0, cabCenterY, 1.8); scene.add(glowF);
+const glowT = new THREE.PointLight(glowRed, 1.2, 3); glowT.position.set(0, MQY - 2.7 + 0.3, 0.5); scene.add(glowT);
+
+// ── ENVIRONMENT ──
+const flrM = new THREE.Mesh(new THREE.PlaneGeometry(50,50), new THREE.MeshStandardMaterial({color:0x0e0e0e,roughness:.2,metalness:.8}));
+flrM.rotation.set(-Math.PI/2,0,0); flrM.position.set(0,-2.72,0); flrM.receiveShadow=true; scene.add(flrM);
+const grd = new THREE.GridHelper(50,50,0x1c1c1c,0x141414); grd.position.set(0,-2.71,0); scene.add(grd);
+
+const bwall = new THREE.Mesh(
+  new THREE.PlaneGeometry(40,20),
+  new THREE.MeshBasicMaterial({color:0x505050,side:THREE.DoubleSide})
+);
+bwall.position.set(0,5,-14);
+scene.add(bwall);
+
+const backWallVideo = document.createElement('video');
+backWallVideo.src = 'quake trailer.mp4';
+backWallVideo.loop = true;
+backWallVideo.muted = true;
+backWallVideo.playsInline = true;
+backWallVideo.setAttribute('playsinline', '');
+const backWallVideoTexture = new THREE.VideoTexture(backWallVideo);
+backWallVideoTexture.minFilter = THREE.LinearFilter;
+backWallVideoTexture.magFilter = THREE.LinearFilter;
+const bwallVideoMat = new THREE.MeshBasicMaterial({
+  map: backWallVideoTexture,
+  side: THREE.DoubleSide,
+  toneMapped: false
+});
+function tryShowBackWallVideo() {
+  try {
+    if (backWallVideo.readyState >= 2) {
+      bwall.material = bwallVideoMat;
+      backWallVideo.play().catch(function(){});
+    }
+  } catch (e) {}
+}
+backWallVideo.addEventListener('loadeddata', tryShowBackWallVideo);
+backWallVideo.addEventListener('canplay', tryShowBackWallVideo);
+backWallVideo.play().catch(function(){});
+tryShowBackWallVideo();
+const shdw = new THREE.Mesh(new THREE.PlaneGeometry(3.2,2.2), new THREE.MeshBasicMaterial({color:0x000000,transparent:true,opacity:.6}));
+shdw.rotation.set(-Math.PI/2,0,0); shdw.position.set(0,-2.71,0); scene.add(shdw);
+
+const pg = new THREE.BufferGeometry();
+const pa = new Float32Array(300*3);
+for(let i=0;i<300;i++){pa[i*3]=(Math.random()-.5)*50;pa[i*3+1]=(Math.random()-.5)*25;pa[i*3+2]=(Math.random()-.5)*18-14;}
+pg.setAttribute('position',new THREE.BufferAttribute(pa,3));
+scene.add(new THREE.Points(pg,new THREE.PointsMaterial({color:0x333333,size:.05,transparent:true,opacity:.3})));
+
+// ── LIGHTING ──
+scene.add(new THREE.AmbientLight(0xffffff, 2.8));
+
+const keyLt = new THREE.DirectionalLight(0xfff5ee, 5.2);
+keyLt.position.set(-5, 9, 6);
+keyLt.castShadow = true;
+keyLt.shadow.mapSize.width = isMobile ? 1024 : 2048;
+keyLt.shadow.mapSize.height = isMobile ? 1024 : 2048;
+keyLt.shadow.camera.near = 0.5;
+keyLt.shadow.camera.far = 25;
+keyLt.shadow.camera.left = -8;
+keyLt.shadow.camera.right = 8;
+keyLt.shadow.camera.top = 8;
+keyLt.shadow.camera.bottom = -8;
+keyLt.shadow.bias = -0.0002;
+keyLt.shadow.radius = 2;
+scene.add(keyLt);
+
+const fillLt = new THREE.DirectionalLight(0xe8eeff, 2.4);
+fillLt.position.set(5, 4, 5);
+scene.add(fillLt);
+
+const rimLt = new THREE.DirectionalLight(0xffffff, 1.8);
+rimLt.position.set(0, 4, -10);
+scene.add(rimLt);
+
+const topLt = new THREE.DirectionalLight(0xffffff, 0.9);
+topLt.position.set(0, 12, 2);
+scene.add(topLt);
+
+const spotLt = new THREE.SpotLight(0xffffff, 5, 18, Math.PI/5, .5);
+spotLt.position.set(0,10,4); spotLt.target.position.set(0,0,0);
+spotLt.castShadow = true;
+spotLt.shadow.mapSize.width = 1024;
+spotLt.shadow.mapSize.height = 1024;
+scene.add(spotLt); scene.add(spotLt.target);
+
+const cpLt = new THREE.SpotLight(0xffffff, 10, 7, Math.PI/3, .4);
+cpLt.position.set(0, CP_Y-2.7+3.5, CP_Z+2);
+cpLt.target.position.set(0, CP_Y-2.7, CP_Z);
+scene.add(cpLt); scene.add(cpLt.target);
+
+const scrLt1 = new THREE.PointLight(0xaaccff, 2.5, 5);
+scrLt1.position.set(0, SCR_WORLD_Y, SCR_FZ+1.2); scene.add(scrLt1);
+const scrLt2 = new THREE.PointLight(0x8899cc, 1.5, 4);
+scrLt2.position.set(0, SCR_WORLD_Y, SCR_FZ+0.9); scene.add(scrLt2);
+
+// ── CAMERA ──
+const VIEW_DEF = {theta:0.42, phi:1.42, r:8.8, ly:0.3};
+const VIEW_FOC = {theta:0.00, phi:1.40, r:3.1, ly:SCR_WORLD_Y};
+let sph = {...VIEW_DEF};
+let camTgt = {theta:-.5, phi:1.38, r:12};
+
+function camPos(th,ph,rad,ly) {
+  return new THREE.Vector3(
+    rad*Math.sin(ph)*Math.sin(th),
+    rad*Math.cos(ph)+ly,
+    rad*Math.sin(ph)*Math.cos(th)
+  );
+}
+function setZUI() {
+  const p = (1-(sph.r-2.8)/10)*100;
+  document.getElementById('zfill').style.height = Math.max(4,Math.min(100,p))+'%';
+}
+
+// ── SCREEN PROJECTION ──
+const scrUI = document.getElementById('screen-ui');
+function projectScreen() {
+  const pts = [
+    new THREE.Vector3(-SCR_W/2, SCR_WORLD_Y+SCR_H/2, SCR_FZ),
+    new THREE.Vector3( SCR_W/2, SCR_WORLD_Y+SCR_H/2, SCR_FZ),
+    new THREE.Vector3(-SCR_W/2, SCR_WORLD_Y-SCR_H/2, SCR_FZ),
+    new THREE.Vector3( SCR_W/2, SCR_WORLD_Y-SCR_H/2, SCR_FZ),
+  ].map(v => {
+    const p = v.clone().project(camera);
+    return {x:(p.x*.5+.5)*innerWidth, y:(-p.y*.5+.5)*innerHeight, beh:p.z>1};
+  });
+  if(pts.some(p=>p.beh)){scrUI.style.opacity='0';scrUI.style.pointerEvents='none';return;}
+  const l=Math.min(pts[0].x,pts[2].x), t2=Math.min(pts[0].y,pts[1].y),
+        r2=Math.max(pts[1].x,pts[3].x), b=Math.max(pts[2].y,pts[3].y);
+  scrUI.style.left=l+'px'; scrUI.style.top=t2+'px';
+  scrUI.style.width=(r2-l)+'px'; scrUI.style.height=(b-t2)+'px';
+  scrUI.style.opacity=focused?'1':'0';
+  scrUI.style.pointerEvents=focused?'all':'none';
+}
+
+// ── INTERACTION ──
+let focused=false, dragging=false, prev={x:0,y:0}, dDist=0;
+let dragJoystick = null;
+const joystickTilt = { L: { x: 0, z: 0 }, R: { x: 0, z: 0 } };
+const JOY_MAX = 0.36;
+const pressedButtons = new Map();
+
+function getControlFromHit(hit) {
+  let o = hit.object;
+  while (o && o !== cab) {
+    if (o.userData && o.userData.controlType) return o;
+    o = o.parent;
+  }
+  return null;
+}
+
+// Load the rebranded arcade (local arcade/ folder when served from AVAX Arcade)
+const AVAX_ARCADE_URL = new URL('arcade/', window.location.href).href;
+let interactiveMode = true;
+// Preload cabinet screen so it's not blank when user clicks PLAY
+(function(){ var ifr = document.getElementById('screen-iframe'); if (ifr) ifr.src = AVAX_ARCADE_URL; })();
+
+function setInteractiveMode(on) {
+  interactiveMode = on;
+  const el = document.getElementById('interactive-toggle');
+  const label = document.getElementById('interactive-label');
+  const hint = document.getElementById('mode-hint');
+  if (on) {
+    el.classList.remove('off');
+    label.textContent = 'Interactive mode';
+    if (hint) hint.textContent = '— play on cabinet';
+    document.getElementById('nbtip').textContent = 'Click cabinet or PLAY to enter';
+  } else {
+    el.classList.add('off');
+    label.textContent = 'Open site';
+    if (hint) hint.textContent = '— open in this tab';
+    document.getElementById('nbtip').textContent = 'Click cabinet or PLAY to open site';
+    if (focused) doUnfocus();
+  }
+}
+
+function doFocus() {
+  if (!interactiveMode) {
+    window.location.href = AVAX_ARCADE_URL;
+    return;
+  }
+  focused=true; camTgt={...VIEW_FOC};
+  const iframe = document.getElementById('screen-iframe');
+  if (iframe) iframe.src = AVAX_ARCADE_URL;
+  document.getElementById('nbplay').classList.add('on');
+  document.getElementById('nbtip').textContent='ESC or PLAY to exit';
+  document.getElementById('info').style.opacity='0';
+  setTimeout(()=>scrUI.classList.add('active'),480);
+}
+function doUnfocus() {
+  focused=false; scrUI.classList.remove('active'); camTgt={...VIEW_DEF};
+  document.getElementById('nbplay').classList.remove('on');
+  document.getElementById('nbtip').textContent = interactiveMode ? 'Click cabinet or PLAY to enter' : 'Click cabinet or PLAY to open site';
+  document.getElementById('info').style.opacity='1';
+}
+
+const raycast=new THREE.Raycaster(), mouse3=new THREE.Vector2();
+
+function handlePointerDown(cx, cy) {
+  mouse3.x=(cx/innerWidth)*2-1;
+  mouse3.y=-(cy/innerHeight)*2+1;
+  raycast.setFromCamera(mouse3,camera);
+  const hits = raycast.intersectObjects(cab.children,true);
+  if (hits.length > 0) {
+    const ctrl = getControlFromHit(hits[0]);
+    if (ctrl && ctrl.userData.controlType === 'joystick') {
+      dragJoystick = ctrl;
+      prev={x:cx,y:cy};
+      return;
+    }
+    if (ctrl && (ctrl.userData.controlType === 'button' || ctrl.userData.controlType === 'start')) {
+      pressedButtons.set(ctrl, Date.now());
+      return;
+    }
+  }
+  dragging=true; dDist=0; prev={x:cx,y:cy};
+}
+function handlePointerMove(cx, cy) {
+  if (dragJoystick && dragJoystick.userData.stick) {
+    const dx = (cx - prev.x) * 0.012;
+    const dy = (cy - prev.y) * 0.012;
+    const id = dragJoystick === jsL.group ? 'L' : 'R';
+    joystickTilt[id].z -= dx;
+    joystickTilt[id].x += dy;
+    joystickTilt[id].z = Math.max(-JOY_MAX, Math.min(JOY_MAX, joystickTilt[id].z));
+    joystickTilt[id].x = Math.max(-JOY_MAX, Math.min(JOY_MAX, joystickTilt[id].x));
+    prev = { x: cx, y: cy };
+    return;
+  }
+  if(!dragging)return;
+  const dx=cx-prev.x, dy=cy-prev.y;
+  dDist+=Math.abs(dx)+Math.abs(dy);
+  camTgt.theta-=dx*.007;
+  camTgt.phi=Math.max(1.1,Math.min(1.65,camTgt.phi+dy*.004));
+  prev={x:cx,y:cy};
+  if(focused&&dDist>10)doUnfocus();
+}
+
+cvs.addEventListener('mousedown', e=>{ handlePointerDown(e.clientX, e.clientY); });
+cvs.addEventListener('touchstart', e=>{
+  if (e.touches.length===1) handlePointerDown(e.touches[0].clientX, e.touches[0].clientY);
+}, {passive:true});
+
+window.addEventListener('mouseup', ()=>{ if (dragJoystick) dragJoystick = null; dragging = false; });
+window.addEventListener('touchend', ()=>{ if (dragJoystick) dragJoystick = null; dragging = false; });
+window.addEventListener('touchcancel', ()=>{ if (dragJoystick) dragJoystick = null; dragging = false; });
+
+window.addEventListener('mousemove', e=>{ handlePointerMove(e.clientX, e.clientY); });
+window.addEventListener('touchmove', e=>{
+  if (e.touches.length===1) {
+    handlePointerMove(e.touches[0].clientX, e.touches[0].clientY);
+    if (dragging || dragJoystick) e.preventDefault();
+  }
+}, {passive:false});
+
+cvs.addEventListener('wheel', e=>{
+  camTgt.r=Math.max(2.8,Math.min(16,camTgt.r+e.deltaY*.013));
+  setZUI();
+},{passive:true});
+
+cvs.addEventListener('click', e=>{
+  if(dDist>8)return;
+  mouse3.x=(e.clientX/innerWidth)*2-1;
+  mouse3.y=-(e.clientY/innerHeight)*2+1;
+  raycast.setFromCamera(mouse3,camera);
+  const hits = raycast.intersectObjects(cab.children,true);
+  if (hits.length > 0) {
+    const ctrl = getControlFromHit(hits[0]);
+    if (ctrl && (ctrl.userData.controlType === 'joystick' || ctrl.userData.controlType === 'button' || ctrl.userData.controlType === 'start')) return;
+    if (!focused) doFocus();
+  }
+});
+cvs.addEventListener('dblclick', ()=>{ if(focused)doUnfocus(); });
+
+document.getElementById('nbplay').onclick = ()=>focused?doUnfocus():doFocus();
+
+document.getElementById('interactive-toggle').onclick = ()=>{
+  setInteractiveMode(!interactiveMode);
+};
+document.getElementById('nbl').onclick    = ()=>{camTgt.theta-=.22;if(focused)doUnfocus();};
+document.getElementById('nbr').onclick    = ()=>{camTgt.theta+=.22;if(focused)doUnfocus();};
+document.getElementById('nbu').onclick    = ()=>camTgt.phi=Math.max(1.1,camTgt.phi-.12);
+document.getElementById('nbd').onclick    = ()=>camTgt.phi=Math.min(1.65,camTgt.phi+.12);
+document.getElementById('zp').onclick     = ()=>{camTgt.r=Math.max(2.8,camTgt.r-.9);setZUI();};
+document.getElementById('zm').onclick     = ()=>{camTgt.r=Math.min(16,camTgt.r+.9);setZUI();};
+
+document.addEventListener('keydown', e=>{
+  if(e.key==='ArrowLeft') {camTgt.theta-=.16;if(focused)doUnfocus();}
+  if(e.key==='ArrowRight'){camTgt.theta+=.16;if(focused)doUnfocus();}
+  if(e.key==='ArrowUp')   camTgt.phi=Math.max(1.1,camTgt.phi-.10);
+  if(e.key==='ArrowDown') camTgt.phi=Math.min(1.65,camTgt.phi+.10);
+  if(e.key==='='||e.key==='+'){camTgt.r=Math.max(2.8,camTgt.r-.7);setZUI();}
+  if(e.key==='-')          {camTgt.r=Math.min(16,camTgt.r+.7);setZUI();}
+  if(e.key==='Enter'||e.key===' '){e.preventDefault();focused?doUnfocus():doFocus();}
+  if(e.key==='Escape') doUnfocus();
+});
+
+camTgt = {theta:-.5, phi:1.38, r:11};
+setTimeout(()=>{ camTgt={...VIEW_DEF}; }, 200);
+setZUI();
+
+// ── RENDER LOOP ──
+let animT = 0;
+function animate() {
+  requestAnimationFrame(animate);
+  animT += .016;
+
+  sph.theta += (camTgt.theta-sph.theta)*.08;
+  sph.phi   += (camTgt.phi  -sph.phi  )*.08;
+  sph.r     += (camTgt.r    -sph.r    )*.08;
+  const lkY = focused ? VIEW_FOC.ly : VIEW_DEF.ly;
+  camera.position.copy(camPos(sph.theta, sph.phi, sph.r, lkY));
+  camera.lookAt(0, lkY, 0);
+
+  jsLLt.intensity = 3.5+Math.sin(animT*3.0)*.8;
+  jsRLt.intensity = 3.5+Math.cos(animT*3.0)*.8;
+  scrLt1.intensity= 2.2+Math.sin(animT*2.2)*.5;
+  scrLt2.intensity= 1.4+Math.cos(animT*1.7)*.3;
+  mqLt.intensity  = 5.5+Math.sin(animT*1.3)*.4;
+  botLt.intensity = 1.6+Math.sin(animT*2.0)*.4;
+  // Marquee flash red (top of arcade)
+  mqMat.emissiveIntensity = 0.15 + Math.sin(animT * 3.2) * 0.45;
+  const glowPulse = 0.85 + Math.sin(animT*1.5)*0.15;
+  glowL.intensity = 2.2*glowPulse; glowR.intensity = 2.2*glowPulse;
+  glowF.intensity = 1.8*glowPulse; glowT.intensity = 1.2*glowPulse;
+
+  ['L','R'].forEach((id,i)=>{
+    const j = id==='L'?jsL:jsR;
+    const t = joystickTilt[id];
+    if (j.stick) {
+      const rate = dragJoystick===j.group ? 1 : 0.18;
+      t.x += (0-t.x)*rate;
+      t.z += (0-t.z)*rate;
+      j.stick.rotation.set(t.x, 0, t.z);
+    }
+  });
+
+  const now = Date.now();
+  pressedButtons.forEach((ts, grp)=>{
+    const face = grp.children[grp.userData.faceIndex];
+    if (now - ts < 90) {
+      if (face) face.position.y = -0.014;
+    } else {
+      if (face) face.position.y = 0.002;
+      pressedButtons.delete(grp);
+    }
+  });
+
+  if (backWallVideo.readyState >= 2) backWallVideoTexture.needsUpdate = true;
+
+  projectScreen();
+  renderer.render(scene,camera);
+}
+animate();
+
+window.addEventListener('resize', ()=>{
+  camera.aspect=innerWidth/innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(innerWidth,innerHeight);
+});
+
+})();
+</script>
+</body>
+</html>

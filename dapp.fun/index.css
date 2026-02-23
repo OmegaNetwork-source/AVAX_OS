@@ -1,0 +1,247 @@
+:root {
+  font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+
+  color-scheme: dark;
+  color: rgba(255, 255, 255, 0.92);
+
+  /* Modern Silver/Dark Liquid Glass Background */
+  background-color: #000;
+  background-image:
+    radial-gradient(at 0% 0%, rgba(255, 255, 255, 0.08) 0px, transparent 50%),
+    radial-gradient(at 100% 0%, rgba(200, 200, 200, 0.05) 0px, transparent 50%),
+    radial-gradient(at 100% 100%, rgba(150, 150, 150, 0.05) 0px, transparent 50%),
+    radial-gradient(at 0% 100%, rgba(255, 255, 255, 0.03) 0px, transparent 50%);
+  background-attachment: fixed;
+  background-size: cover;
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* Glassmorphism Utilities - Refined for "Liquid Glass" look */
+.glass-panel {
+  background: rgba(20, 20, 20, 0.4);
+  backdrop-filter: blur(25px) saturate(100%);
+  -webkit-backdrop-filter: blur(25px) saturate(100%);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow:
+    0 8px 32px 0 rgba(0, 0, 0, 0.4),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.05);
+}
+
+.glass-card {
+  background: rgba(40, 40, 40, 0.3);
+  backdrop-filter: blur(40px) saturate(120%);
+  -webkit-backdrop-filter: blur(40px) saturate(120%);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  box-shadow:
+    0 15px 35px rgba(0, 0, 0, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+.glass-card:hover {
+  background: rgba(60, 60, 60, 0.4);
+  border-color: rgba(255, 255, 255, 0.3);
+  transform: translateY(-4px) scale(1.01);
+  box-shadow:
+    0 25px 50px rgba(0, 0, 0, 0.5),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+.glass-pill {
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 999px;
+}
+
+.glass-input {
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  color: white;
+  transition: all 0.3s ease;
+}
+
+.glass-input:focus {
+  background: rgba(0, 0, 0, 0.5);
+  border-color: rgba(255, 255, 255, 0.3);
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.1);
+}
+
+.glass-button {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: white;
+  transition: all 0.2s;
+}
+
+.glass-button:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+/* Beautiful Abstract Shapes for Background */
+.blob {
+  position: absolute;
+  filter: blur(90px);
+  z-index: -1;
+  opacity: 0.2;
+  /* Subtle */
+  animation: float 25s infinite ease-in-out;
+}
+
+@keyframes float {
+  0% {
+    transform: translate(0px, 0px) scale(1);
+  }
+
+  33% {
+    transform: translate(40px, -60px) scale(1.1);
+  }
+
+  66% {
+    transform: translate(-30px, 30px) scale(0.9);
+  }
+
+  100% {
+    transform: translate(0px, 0px) scale(1);
+  }
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.spin {
+  animation: spin 1s linear infinite;
+  display: inline-block;
+}
+
+@keyframes spin {
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes pulse {
+
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  50% {
+    opacity: 0.5;
+    transform: scale(1.2);
+  }
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes celebrationPop {
+  0% {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+
+  50% {
+    transform: scale(1.05);
+  }
+
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* ══════════════════════════════════════════════════════════════
+   MOBILE RESPONSIVE STYLES
+   ══════════════════════════════════════════════════════════════ */
+
+/* Tablet and below */
+@media (max-width: 768px) {
+
+  /* Hide complex IDE on mobile - show message instead */
+  .ide-mobile-hide {
+    display: none !important;
+  }
+
+  /* Reduce padding on glass cards */
+  .glass-card {
+    padding: 24px !important;
+  }
+
+  /* Smaller blobs on mobile */
+  .blob {
+    width: 300px !important;
+    height: 300px !important;
+    opacity: 0.05 !important;
+  }
+}
+
+/* Phone screens */
+@media (max-width: 480px) {
+
+  /* Even smaller padding */
+  .glass-card {
+    padding: 20px !important;
+    border-radius: 20px !important;
+  }
+
+  .glass-pill {
+    padding: 6px 12px !important;
+  }
+
+  .glass-panel {
+    border-radius: 16px !important;
+  }
+
+  /* Hide blobs completely on small phones */
+  .blob {
+    display: none !important;
+  }
+
+  /* Reduce button sizes */
+  .glass-button {
+    padding: 6px 12px !important;
+    font-size: 11px !important;
+  }
+}
